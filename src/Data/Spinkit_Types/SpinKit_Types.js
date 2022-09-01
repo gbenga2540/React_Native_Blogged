@@ -1,0 +1,16 @@
+export const spinkit_types = [
+    'CircleFlip',
+    'Bounce',
+    'Wave',
+    'WanderingCubes',
+    'Pulse',
+    'ChasingDots',
+    'ThreeBounce',
+    'Circle',
+    '9CubeGrid',
+    'WordPress',
+    'FadingCircle',
+    'FadingCircleAlt',
+    'Arc',
+    'ArcAlt',
+];
