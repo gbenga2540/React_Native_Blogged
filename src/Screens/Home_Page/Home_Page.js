@@ -12,16 +12,17 @@ import Spinner from 'react-native-spinkit';
 import Feather from 'react-native-vector-icons/Feather';
 import { spinkit_types } from '../../Data/Spinkit_Types/SpinKit_Types';
 import BlogCard from '../../Components/Blog_Card/Blog_Card';
+import { clear_all_blogs, set_all_blogs } from '../../Redux/Actions/All_Blogs/All_Blogs_Actions';
 
 const HomePage = ({ navigation }) => {
     const dispatch = useDispatch();
 
     const isDarkMode = useSelector(state => state.isDarkMode);
+    const AllBlogs = useSelector(state => state.AllBlogs);
 
     const [isError, setIsError] = useState(false);
     const [ErrorMsg, setErrorMsg] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [blogPost, setBlogPost] = useState([]);
     const [search, setSearch] = useState('');
     const [paginationIndex, setPaginationIndex] = useState(0);
     // const [tags, setTags] = useState([0, 2]);
@@ -33,43 +34,50 @@ const HomePage = ({ navigation }) => {
         setIsLoading(true);
         setIsError(false);
         setErrorMsg('');
-        Axios.get(`${api_base_endpoint()}blogs/?pagination_index=${paginationIndex}&search=${search}&tags=[]`, {
-            headers: {
-                'x-access-token': user_token(),
-            },
-        })
-            .catch(err => {
-                setIsError(true);
-                setIsLoading(false);
-                if (err) {
-                    setErrorMsg('Network Error');
-                }
+
+        try {
+            Axios.get(`${api_base_endpoint()}blogs/?pagination_index=${paginationIndex}&search=${search}&tags=[]`, {
+                headers: {
+                    'x-access-token': user_token(),
+                },
             })
-            .then(res => {
-                if (res === null || res === undefined) {
+                .catch(err => {
                     setIsError(true);
                     setIsLoading(false);
-                    setErrorMsg('Network Error');
-                } else {
-                    if (res?.data?.status === 'success') {
-                        if (res?.data?.response?.length > 0) {
-                            setIsError(false);
-                            setErrorMsg('');
-                            setIsLoading(false);
-                            setBlogPost([...res?.data?.response]);
-                        } else {
-                            setIsError(false);
-                            setErrorMsg('');
-                            setIsLoading(true);
-                            setBlogPost([]);
-                        }
-                    } else {
+                    if (err) {
+                        setErrorMsg('Network Error');
+                    }
+                })
+                .then(res => {
+                    if (res === null || res === undefined) {
                         setIsError(true);
                         setIsLoading(false);
-                        setErrorMsg(res?.data?.code);
+                        setErrorMsg('Network Error');
+                    } else {
+                        if (res?.data?.status === 'success') {
+                            if (res?.data?.response?.length > 0) {
+                                setIsError(false);
+                                setErrorMsg('');
+                                setIsLoading(false);
+                                dispatch(set_all_blogs([...res?.data?.response]));
+                            } else {
+                                setIsError(false);
+                                setErrorMsg('');
+                                setIsLoading(true);
+                                dispatch(clear_all_blogs());
+                            }
+                        } else {
+                            setIsError(true);
+                            setIsLoading(false);
+                            setErrorMsg(res?.data?.code);
+                        }
                     }
-                }
-            });
+                });
+        } catch (error) {
+            setIsError(true);
+            setIsLoading(false);
+            setErrorMsg('Network Error');
+        }
     }, [dispatch, search, paginationIndex]);
 
     return (
@@ -98,11 +106,11 @@ const HomePage = ({ navigation }) => {
                     <Text style={styles.text_error}>{ErrorMsg}</Text>
                 </View>
             }
-            {!isLoading && !isError && blogPost?.length > 0 &&
+            {!isLoading && !isError && AllBlogs?.length > 0 &&
                 <View style={styles.hp_blog_post_w}>
                     <FlatList
                         keyExtractor={item => item?.bid}
-                        data={blogPost}
+                        data={AllBlogs}
                         renderItem={itemData => <BlogCard b_post={itemData?.item} navigation={navigation} />}
                     />
                 </View>
@@ -129,11 +137,11 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     hp_d_p_t1: {
-        fontFamily: fonts.PoppinsBold,
+        fontFamily: fonts.Poppins_600,
         fontSize: 23,
     },
     hp_d_p_t2: {
-        fontFamily: fonts.PoppinsRegular,
+        fontFamily: fonts.Poppins_400,
         fontSize: 17,
     },
     hp_d_p_image: {
@@ -152,7 +160,7 @@ const styles = StyleSheet.create({
     },
     text_error: {
         color: 'red',
-        fontFamily: fonts.PoppinsRegular,
+        fontFamily: fonts.Poppins_400,
         fontSize: 17,
         marginTop: 5,
     },

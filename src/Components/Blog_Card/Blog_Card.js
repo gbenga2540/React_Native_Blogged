@@ -7,6 +7,7 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import Colors from '../../Utils/Colors/Colors';
+import { high_nums_converter } from '../../Utils/High_Nums_Converter/High_Nums_Converter';
 
 const BlogCard = ({ b_post, navigation }) => {
     const ScreenDimensions = useSelector(state => state.ScreenDimensions);
@@ -55,7 +56,6 @@ const BlogCard = ({ b_post, navigation }) => {
                 <View style={styles.bc_m_b_d_2}>
                     <View style={styles.bc_m_b_d_2_1}>
                         <Text style={[styles.bc_m_b_d_2_1_t, { color: Colors(isDarkMode).BaseText }]}>{b_post?.title}</Text>
-                        <Text style={[styles.bc_m_b_d_2_1_st, { color: Colors(isDarkMode).BaseText }]}>{b_post?.sub_title}</Text>
                     </View>
                     <View style={styles.bc_m_b_d_2_2}>
                         <TouchableWithoutFeedback>
@@ -74,7 +74,9 @@ const BlogCard = ({ b_post, navigation }) => {
                                         color={Colors(isDarkMode).BasePHText}
                                     />
                                 }
-                                <Text style={{ color: Colors(isDarkMode).BaseText }}>{'4.3k'}</Text>
+                                <Text style={{ color: Colors(isDarkMode).BaseText }}>
+                                    {high_nums_converter(b_post?.likes_l)}
+                                </Text>
                             </View>
                         </TouchableWithoutFeedback>
                         <View style={styles.bc_m_b_d_2_2_c}>
@@ -83,7 +85,9 @@ const BlogCard = ({ b_post, navigation }) => {
                                 size={28}
                                 color={Colors(isDarkMode).BasePHText}
                             />
-                            <Text style={{ color: Colors(isDarkMode).BaseText }}>{'998'}</Text>
+                            <Text style={{ color: Colors(isDarkMode).BaseText }}>
+                                {high_nums_converter(b_post?.comments_l)}
+                            </Text>
                         </View>
                     </View>
                 </View>
@@ -128,7 +132,7 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
     },
     bc_m_b_d_1_t: {
-        fontFamily: fonts.PoppinsBold,
+        fontFamily: fonts.Poppins_600,
         fontSize: 14,
     },
     bc_m_b_d_1_dot: {
@@ -145,18 +149,18 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     bc_m_b_d_2_1: {
-        flexBasis: '90%',
+        flexBasis: '88%',
     },
     bc_m_b_d_2_1_t: {
-        fontFamily: fonts.PoppinsBold,
+        fontFamily: fonts.Poppins_600,
         fontSize: 24,
     },
     bc_m_b_d_2_1_st: {
-        fontFamily: fonts.PoppinsRegular,
+        fontFamily: fonts.Poppins_400,
         fontSize: 16,
     },
     bc_m_b_d_2_2: {
-        flexBasis: '10%',
+        flexBasis: '12%',
         alignItems: 'center',
     },
     bc_m_b_d_2_2_l: {

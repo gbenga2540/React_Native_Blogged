@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontFamily: fonts.PoppinsRegular,
+    fontFamily: fonts.Poppins_400,
     fontSize: 15,
     marginBottom: 20,
   },

@@ -1,4 +1,4 @@
 export const fonts = {
-    PoppinsRegular: 'Poppins-Regular',
-    PoppinsBold: 'Poppins-Bold',
+    Poppins_400: 'Poppins-Regular',
+    Poppins_600: 'Poppins-Bold',
 };

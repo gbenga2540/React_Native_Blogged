@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     sb_m_placeholder: {
-        fontFamily: fonts.PoppinsRegular,
+        fontFamily: fonts.Poppins_400,
         width: '100%',
         height: '100%',
         fontSize: 16,
