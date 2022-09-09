@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
-import { useColorScheme, StatusBar, Dimensions } from 'react-native';
+import { useColorScheme, StatusBar, Dimensions, View, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { set_dark_mode } from '../Redux/Actions/Dark_Mode/Dark_Mode_Actions';
 import { set_screen_dimensions } from '../Redux/Actions/Screen_Dimensions/Screen_Dimensions_Actions';
 import { NavigationContainer } from '@react-navigation/native';
-// import AuthStack from '../Routes/Auth/Auth_Stack';
 import HomeStack from '../Routes/Home/Home_Stack';
 import Colors from '../Utils/Colors/Colors';
 import { api_base_endpoint } from '../Configs/API/API_Base_Endpoint';
@@ -19,7 +18,7 @@ const App = () => {
   const s_height = parseInt(Dimensions.get('window')?.height, 10);
 
   useEffect(() => {
-    dispatch(set_dark_mode(isDarkMode));
+    dispatch(set_dark_mode({ isdarkmode: isDarkMode }));
   }, [isDarkMode, dispatch]);
 
   useEffect(() => {
@@ -31,19 +30,31 @@ const App = () => {
       .then(res => {
         if (res !== null || res !== undefined) {
           if (res?.data?.status === 'success') {
-            dispatch(set_blog_tags([...res?.data?.response]));
+            dispatch(set_blog_tags({ blog_tags: [...res?.data?.response] }));
           }
         }
       });
   }, [dispatch]);
 
   return (
-    <NavigationContainer>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={Colors(isDarkMode).BaseBG} />
-      {/* <AuthStack /> */}
-      <HomeStack />
-    </NavigationContainer>
+    <View style={[styles.app_main, { backgroundColor: Colors(isDarkMode).BaseBG }]}>
+      <NavigationContainer>
+        <StatusBar
+          barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+          backgroundColor={Colors(isDarkMode).BaseBG}
+        />
+        <HomeStack />
+      </NavigationContainer>
+    </View>
   );
 };
 
 export default App;
+
+const styles = StyleSheet.create({
+  app_main: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+});

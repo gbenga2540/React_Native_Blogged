@@ -9,8 +9,8 @@ import { user_token } from '../../Configs/Token/User_Token';
 import { current_date } from '../../Utils/Current_Date/Current_Date';
 import SearchBar from '../../Components/Search_Bar/Search_Bar';
 import Spinner from 'react-native-spinkit';
-import Feather from 'react-native-vector-icons/Feather';
 import { spinkit_types } from '../../Data/Spinkit_Types/SpinKit_Types';
+import Feather from 'react-native-vector-icons/Feather';
 import BlogCard from '../../Components/Blog_Card/Blog_Card';
 import { clear_all_blogs, set_all_blogs } from '../../Redux/Actions/All_Blogs/All_Blogs_Actions';
 
@@ -59,7 +59,7 @@ const HomePage = ({ navigation }) => {
                                 setIsError(false);
                                 setErrorMsg('');
                                 setIsLoading(false);
-                                dispatch(set_all_blogs([...res?.data?.response]));
+                                dispatch(set_all_blogs({ all_blogs: [...res?.data?.response] }));
                             } else {
                                 setIsError(false);
                                 setErrorMsg('');
@@ -97,7 +97,12 @@ const HomePage = ({ navigation }) => {
             </View>
             {isLoading && !isError &&
                 <View style={styles.hp_spinner}>
-                    <Spinner isVisible={true} size={80} type={spinkit_types[6]} color={Colors().Primary} />
+                    <Spinner
+                        isVisible={true}
+                        size={80}
+                        type={spinkit_types[6]}
+                        color={Colors().Primary}
+                    />
                 </View>
             }
             {isError &&

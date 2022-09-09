@@ -15,6 +15,7 @@ import { clear_current_blog, set_current_blog, update_current_blog_liked, update
 import { update_liked_on_one_blog, update_comment_l_on_one_blog } from '../../Redux/Actions/All_Blogs/All_Blogs_Actions';
 import { high_nums_converter } from '../../Utils/High_Nums_Converter/High_Nums_Converter';
 import { none_null } from '../../Utils/None_Null/None_Null';
+import CommentCard from '../../Components/Comment_Card/Comment_Card';
 
 const DetailsPage = ({ navigation, route }) => {
     const bid = route?.params?.bid;
@@ -43,7 +44,7 @@ const DetailsPage = ({ navigation, route }) => {
 
                     } else {
                         if (res?.data?.status === 'success') {
-                            dispatch(set_current_blog({ ...res?.data?.response }));
+                            dispatch(set_current_blog({ current_blog: { ...res?.data?.response } }));
                         } else {
 
                         }
@@ -88,6 +89,7 @@ const DetailsPage = ({ navigation, route }) => {
                             console.log('comment posted');
                             setComment('');
                             dispatch(update_comment_l_on_one_blog({ blog_id: bid, added_comment: true }));
+                            refreshBlog();
                         } else {
 
                         }
@@ -130,7 +132,7 @@ const DetailsPage = ({ navigation, route }) => {
                         .then(res => {
                             if (res?.data?.status === 'success') {
                                 console.log('patched unlike');
-                                dispatch(update_current_blog_liked(false));
+                                dispatch(update_current_blog_liked({ liked_v: false }));
                                 dispatch(update_liked_on_one_blog({ blog_id: bid, liked_v: false }));
                             } else {
 
@@ -155,7 +157,7 @@ const DetailsPage = ({ navigation, route }) => {
                         .then(res => {
                             if (res?.data?.status === 'success') {
                                 console.log('patched like');
-                                dispatch(update_current_blog_liked(true));
+                                dispatch(update_current_blog_liked({ liked_v: true }));
                                 dispatch(update_liked_on_one_blog({ blog_id: bid, liked_v: true }));
                             } else {
 
@@ -189,7 +191,7 @@ const DetailsPage = ({ navigation, route }) => {
                             .then(res => {
                                 if (res?.data?.status === 'success') {
                                     console.log('patched unfollow');
-                                    dispatch(update_current_blog_follow_author(false));
+                                    dispatch(update_current_blog_follow_author({ a_followed_v: false }));
                                 } else {
 
                                 }
@@ -213,7 +215,7 @@ const DetailsPage = ({ navigation, route }) => {
                             .then(res => {
                                 if (res?.data?.status === 'success') {
                                     console.log('patched follow');
-                                    dispatch(update_current_blog_follow_author(true));
+                                    dispatch(update_current_blog_follow_author({ a_followed_v: true }));
                                 } else {
 
                                 }
@@ -248,7 +250,7 @@ const DetailsPage = ({ navigation, route }) => {
 
                     } else {
                         if (res?.data?.status === 'success') {
-                            dispatch(set_current_blog({ ...res?.data?.response }));
+                            dispatch(set_current_blog({ current_blog: { ...res?.data?.response } }));
                         } else {
 
                         }
@@ -317,7 +319,12 @@ const DetailsPage = ({ navigation, route }) => {
                     </View>
                     {CurrentBlog?.author !== 'Not Found' && none_null(CurrentBlog?.author) === false &&
                         <View style={styles.dp_m_sv_ai}>
-                            {CurrentBlog?.a_dp_link !== 'none' &&
+                            {CurrentBlog?.a_dp_link === 'none'
+                                ?
+                                <Text style={styles.dp_m_sv_ai_t}>
+                                    {CurrentBlog?.author?.[0]?.toUpperCase()}
+                                </Text>
+                                :
                                 <Image
                                     style={styles.dp_m_sv_ai_i}
                                     source={{
@@ -339,11 +346,13 @@ const DetailsPage = ({ navigation, route }) => {
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity onPress={followAuthor}>
-                                <Text style={[styles.dp_m_sv_ai_ff, { borderColor: Colors(isDarkMode).BasePHText, color: Colors(isDarkMode).BasePHText }]}>
-                                    {CurrentBlog?.a_followed ? 'Following' : 'Follow'}
-                                </Text>
-                            </TouchableOpacity>
+                            {user_token() && CurrentBlog?.isowner === false &&
+                                <TouchableOpacity onPress={followAuthor}>
+                                    <Text style={[styles.dp_m_sv_ai_ff, { borderColor: Colors(isDarkMode).BasePHText, color: Colors(isDarkMode).BasePHText }]}>
+                                        {CurrentBlog?.a_followed ? 'Following' : 'Follow'}
+                                    </Text>
+                                </TouchableOpacity>
+                            }
                         </View>
                     }
                     {CurrentBlog?.b_dp_link !== 'none' &&
@@ -359,9 +368,19 @@ const DetailsPage = ({ navigation, route }) => {
                     <Text style={[styles.dp_m_sv_mssg, { color: Colors(isDarkMode).BaseText }]}>
                         {CurrentBlog?.message}
                     </Text>
+                    <View>
+                        {CurrentBlog?.comments?.map((item, index) =>
+                            <CommentCard
+                                key={index}
+                                comment={item}
+                                is_blog_owner={CurrentBlog?.isowner}
+                                blog_id={bid}
+                            />
+                        )}
+                    </View>
                 </ScrollView>
             }
-            {CurrentBlog &&
+            {CurrentBlog && none_null(user_token()) === false &&
                 <KeyboardAvoidingView style={[styles.dp_m_cmnt, {
                     backgroundColor: Colors(isDarkMode).BaseBG,
                     shadowColor: Colors(isDarkMode).BaseText,
@@ -390,18 +409,17 @@ const DetailsPage = ({ navigation, route }) => {
                         style={[styles.dp_m_cmnt_ti, { color: Colors(isDarkMode)?.BaseText }]}
                         value={comment}
                         onChangeText={text => setComment(text)}
-                    // editable={false}
+                    // editable={none_null(user_token()) === true}
                     />
-                    <TouchableWithoutFeedback>
+                    <TouchableOpacity onPress={postComment}>
                         <View style={styles.dp_m_cmnt_l_s}>
                             <Feather
                                 name="send"
                                 size={24}
                                 color={Colors().Primary}
-                                onPress={postComment}
                             />
                         </View>
-                    </TouchableWithoutFeedback>
+                    </TouchableOpacity>
                 </KeyboardAvoidingView>
             }
         </SafeAreaView>
@@ -440,7 +458,7 @@ const styles = StyleSheet.create({
     },
     dp_m_sv: {
         marginTop: 20,
-        marginBottom: 55,
+        marginBottom: none_null(user_token()) === false ? 55 : 5,
     },
     dp_m_sv_t: {
         fontFamily: fonts.Poppins_600,
@@ -463,6 +481,21 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    dp_m_sv_ai_t: {
+        width: 50,
+        minWidth: 50,
+        height: 50,
+        minHeight: 50,
+        borderRadius: 50,
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        fontFamily: fonts.Poppins_600,
+        fontSize: 35,
+        backgroundColor: Colors().Primary,
+        color: 'white',
+        marginRight: 7,
+        paddingTop: 2,
     },
     dp_m_sv_ai_i: {
         width: 50,

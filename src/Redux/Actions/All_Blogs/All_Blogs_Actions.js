@@ -1,4 +1,4 @@
-export const set_all_blogs = (all_blogs) => {
+export const set_all_blogs = ({ all_blogs }) => {
     return {
         type: 'SET_ALL_BLOGS',
         payload: all_blogs,

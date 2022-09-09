@@ -5,6 +5,9 @@
 // import { PersistGate } from 'redux-persist/integration/react';
 // import store from './src/Configs/Redux_Store/Redux_Store';
 // import App from './src/App/App';
+// import TimeAgo from 'javascript-time-ago';
+// import en from 'javascript-time-ago/locale/en';
+// TimeAgo.addDefaultLocale(en);
 
 // const Root = () => {
 //     return (
@@ -26,6 +29,9 @@ import { name as appName } from './app.json';
 import { Provider } from 'react-redux';
 import store from './src/Configs/Redux_Store/Redux_Store';
 import App from './src/App/App';
+import TimeAgo from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en';
+TimeAgo.addDefaultLocale(en);
 
 const Root = () => {
     return (
